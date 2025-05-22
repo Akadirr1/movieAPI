@@ -4,11 +4,6 @@ const fetch = require('node-fetch');
 const https = require('https');
 const fs = require('fs');
 
-// SSL sertifikaları için gerekli ayarlar
-const options = {
-	key: fs.readFileSync('/etc/letsencrypt/live/koufrontend.com/privkey.pem'),
-	cert: fs.readFileSync('/etc/letsencrypt/live/koufrontend.com/fullchain.pem')
-};
 
 const app = express();
 const TMDB_API = "71bd251de003b28f5ec266b4eca971d6"
@@ -67,6 +62,11 @@ app.get("/movie/:id", async (req, res) => {
 	}
 });
 
-https.createServer(options, app).listen(5500, () => {
+const options = {
+	key: fs.readFileSync('/etc/ssl/self-signed/key.pem'),
+	cert: fs.readFileSync('/etc/ssl/self-signed/cert.pem')
+};
+
+https.createServer(options, app).listen(5500, '0.0.0.0', () => {
 	console.log('HTTPS server running on port 5500');
 });
