@@ -1,16 +1,20 @@
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
+const https = require('https');
+const fs = require('fs');
+
+// SSL sertifikaları için gerekli ayarlar
+const options = {
+	key: fs.readFileSync('/etc/letsencrypt/live/koufrontend.com/privkey.pem'),
+	cert: fs.readFileSync('/etc/letsencrypt/live/koufrontend.com/fullchain.pem')
+};
 
 const app = express();
 const TMDB_API = "71bd251de003b28f5ec266b4eca971d6"
 
 
-app.use(cors({
-	origin: '*', // Geliştirme sırasında tüm kaynaklara izin ver
-	methods: ['GET', 'POST'], // İzin verilen HTTP metodları
-	allowedHeaders: ['Content-Type', 'Authorization'] // İzin verilen başlıklar
-}));
+app.use(cors());
 
 app.get("/popular", async (req, res) => {
 	try {
@@ -63,6 +67,6 @@ app.get("/movie/:id", async (req, res) => {
 	}
 });
 
-app.listen(5500, "0.0.0.0", () => {
-	console.log("Server is running on all interfaces at port 5500")
+https.createServer(options, app).listen(5500, () => {
+	console.log('HTTPS server running on port 5500');
 });
