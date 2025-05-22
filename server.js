@@ -63,10 +63,10 @@ app.get("/movie/:id", async (req, res) => {
 });
 
 const options = {
-	key: fs.readFileSync('/etc/ssl/self-signed/key.pem'),
-	cert: fs.readFileSync('/etc/ssl/self-signed/cert.pem')
+    key: fs.readFileSync('./ssl/key.pem'),
+    cert: fs.readFileSync('./ssl/cert.pem')
 };
 
 https.createServer(options, app).listen(5500, '0.0.0.0', () => {
-	console.log('HTTPS server running on port 5500');
+    console.log('HTTPS server running on port 5500');
 });
