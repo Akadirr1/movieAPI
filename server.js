@@ -4,8 +4,8 @@ const fetch = require('node-fetch');
 const app = express();
 
 const corsOptions = {
-    // Hem www'li hem de www'siz haline izin ver
-    origin: ['https://koufrontend.com', 'https://www.koufrontend.com']
+	// Hem www'li hem de www'siz haline izin ver
+	origin: ['https://koufrontend.com', 'https://www.koufrontend.com']
 };
 
 app.use(cors(corsOptions));
@@ -19,9 +19,38 @@ app.get('/', (req, res) => {
 });
 
 app.get("/popular", async (req, res) => {
-	const response = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API}&language=tr-US&`);
-	const data = await response.json();
-	res.json(data);
+	console.log("--- '/popular' endpoint'ine yeni bir istek geldi. ---");
+	try {
+		const apiKey = TMDB_API;
+
+		// API anahtarının yüklenip yüklenmediğini kontrol et ve logla
+		console.log("Kullanılan API Anahtarı yüklendi mi?:", apiKey ? "EVET" : "HAYIR - UNDEFINED!");
+
+		if (!apiKey) {
+			// Eğer API anahtarı yoksa, sunucuyu çökertmeden hata mesajı döndür.
+			console.error("KRİTİK HATA: TMDB_API_KEY ortam değişkeni bulunamadı!");
+			return res.status(500).json({ error: "Sunucu yapılandırma hatası: API anahtarı eksik." });
+		}
+
+		const response = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=tr-US`);
+
+		// TMDB'den gelen cevabın başarılı olup olmadığını kontrol et
+		if (!response.ok) {
+			console.error("TMDB API'sinden Hatalı Cevap:", response.status, response.statusText);
+			const errorBody = await response.text();
+			console.error("TMDB Hata Detayı:", errorBody);
+			return res.status(response.status).json({ error: "Film verileri alınırken bir hata oluştu." });
+		}
+
+		const data = await response.json();
+		console.log("TMDB'den veri başarıyla alındı ve istemciye gönderiliyor.");
+		res.json(data);
+
+	} catch (error) {
+		// Fetch sırasında veya başka bir yerde oluşan kritik hataları yakala
+		console.error("'/popular' BLOĞUNDA BEKLENMEDİK KRİTİK HATA:", error);
+		res.status(500).json({ error: "Sunucuda beklenmedik bir hata oluştu." });
+	}
 });
 app.get("/search", async (req, res) => {
 	const searchquery = req.query.query;
