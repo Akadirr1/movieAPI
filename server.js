@@ -4,7 +4,8 @@ const fetch = require('node-fetch');
 const app = express();
 
 const corsOptions = {
-	origin: 'https://www.koufrontend.com'
+    // Hem www'li hem de www'siz haline izin ver
+    origin: ['https://koufrontend.com', 'https://www.koufrontend.com']
 };
 
 app.use(cors(corsOptions));
