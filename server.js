@@ -1,15 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
-
 const app = express();
-const TMDB_API = "71bd251de003b28f5ec266b4eca971d6"
 
 const corsOptions = {
-	origin: 'https://koufrontend.com'
+	origin: 'https://www.koufrontend.com'
 };
+
 app.use(cors(corsOptions));
 app.use(express.json());
+
+const TMDB_API = "71bd251de003b28f5ec266b4eca971d6"
 
 app.get('/', (req, res) => {
 	console.log("sunucu çalışmış la");
